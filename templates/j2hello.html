@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>😊Hello Page</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <p>FastAPI/Jinja2로 만든 HTML 페이지입니다.</p>
+    <hr>
+    {{ request.url }} <br/>
+    {{ request.method }} <br/>
+    {{ request.client.host }} <br/>
+    {{ request.headers['content-Type'] }} <br/>
+    {{ request.headers['user-agent'] }}
+</body>
+</html>
