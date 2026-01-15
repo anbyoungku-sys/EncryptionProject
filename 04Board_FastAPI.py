@@ -151,7 +151,7 @@ async def board_edit(bdno: int, title: str = Form(...), contents: str = Form(...
         await db.commit()
 
     return RedirectResponse(url=f"/board/{bdno}", status_code=303)
-
+# 저장
 # 스크립트를 직접 실행할 때만 서버 실행
 if __name__ == "__main__":
     import uvicorn
