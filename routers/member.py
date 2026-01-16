@@ -48,6 +48,10 @@ async def joinok(request: Request, username: str = Form(...),
 #-----------------------------------------------------------
 @router.get("/list", response_class=HTMLResponse)
 async def member_list(request: Request):
+    # 이미 로그인 않았다면 /board/list로 이동
+    if request.session.get("user") is None:
+        return RedirectResponse(url="/member/login", status_code=303)
+
     async with aiosqlite.connect(MemberDB_NAME) as db:
         results = await db.execute_fetchall("""
             SELECT memberid, username, name, email, regdate
@@ -128,3 +132,8 @@ async def login(request: Request, username: str = Form(...), password: str = For
         "request": request,
         "member": member
     })
+
+@router.get("/logout")
+async def logout(request: Request):
+    request.session.pop("user", None) # 세션에서 사용자 정보 삭제
+    return RedirectResponse(url="/", status_code=303) # 메인으로 이동
