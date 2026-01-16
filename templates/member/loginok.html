@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Register OK</title>
+</head>
+<body>
+<h1>회원가입 완료</h1>
+<p>{{ name }} ({{ username }}) 님, 가입이 완료되었습니다.</p>
+
+<p><b>아이디:</b> {{ member["username"] }}</p>
+<p><b>이름:</b> {{ member["name"] }}</p>
+<p><b>이메일:</b> {{ member["email"] }}</p>
+<p><b>가입일:</b> {{ member["regdate"] }}</p>
+
+<hr/>
+<a href="/member/list">회원목록</a>
+<a href="/member/logout">로그아웃</a>
+</body>
+</html>

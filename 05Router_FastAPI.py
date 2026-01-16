@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from db import init_db
 from routers.member import router as router_member
 from routers.board import router as router_board
+from starlette.middleware.sessions import SessionMiddleware
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,10 +15,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-
-# 라우터 등록
 app.include_router(router_member)
 app.include_router(router_board)
+# 세션 미들웨어 추가 - 비밀키는 하드코드 하지 말고, 반드시 환경변수등에 등록해서 사용할 것!
+# app.add_middleware(SessionMiddleware, secret_key="G8fQmZP2aT7LrW9xB5N6CkHJVd4YEsUp")
+# 윈도우에서 시스템 속성 - 환경변수 - 시스템변수에서 환경 변수 등록 후 인텔리제이 재시작
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET_KEY"))
+print(os.getenv("SESSION_SECRET_KEY"))
+
 
 @app.get("/", response_class=HTMLResponse)
 def index():
