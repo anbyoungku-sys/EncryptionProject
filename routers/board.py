@@ -91,7 +91,14 @@ async def board_detail(request: Request, bdno: int):
 
 # 게시글 삭제하기
 @router.post("/{bdno}/delete")
-async def board_delete(bdno: int):
+async def board_delete(request:Request, bdno : int):
+    # 이미 로그인이 안되었다면 /member/login으로 이동
+    if request.session.get("user") is None:
+        return RedirectResponse(url="/member/login", status_code=303)
+
+    # 자신이 쓴 글이 아니면  /board/list으로 이동
+    #
+
     async with aiosqlite.connect(BoardDB_NAME) as db:
         await db.execute("DELETE FROM board WHERE bdno = ?", (bdno,))
         await db.commit()
@@ -103,6 +110,13 @@ async def board_delete(bdno: int):
 # 게시글 수정하기 폼
 @router.get("/{bdno}/edit", response_class=HTMLResponse)
 async def board_edit_form(request: Request, bdno: int):
+    # 이미 로그인이 안되었다면 /member/login으로 이동
+    if request.session.get("user") is None:
+        return RedirectResponse(url="/member/login", status_code=303)
+
+    # 자신이 쓴 글이 아니면  /board/list으로 이동
+    #
+
     async with aiosqlite.connect(BoardDB_NAME) as db:
         async with db.execute("SELECT * FROM board WHERE bdno = ?", (bdno,)) as cur:
             result = await cur.fetchone()
@@ -127,7 +141,13 @@ async def board_edit_form(request: Request, bdno: int):
 
 # 게시글 수정하기 처리
 @router.post("/{bdno}/edit")
-async def board_edit(bdno: int, title: str = Form(...), contents: str = Form(...)):
+async def board_edit(request: Request, bdno: int, title: str = Form(...), contents: str = Form(...)):
+    # 이미 로그인이 안되었다면 /member/login으로 이동
+    if request.session.get("user") is None:
+        return RedirectResponse(url="/member/login", status_code=303)
+
+    # 자신이 쓴 글이 아니면  /board/list으로 이동
+    #
     async with aiosqlite.connect(BoardDB_NAME) as db:
         await db.execute("UPDATE board SET title = ?, contents = ? WHERE bdno = ?",
                          (title, contents, bdno))
