@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>sungjuk List</title>
+</head>
+<body>
+<h1>성적데이터 목록</h1>
+
+<div>
+    <a href="/sungjuk/new">성적등록</a> |
+    <a href="/member/list">회원목록(예제)</a>
+    <a href="/board/list">게시판 목록(예제)</a>
+</div>
+
+<hr />
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>성적번호</th>
+        <th>이름</th>
+        <th>국어</th>
+        <th>영어</th>
+        <th>수학</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for sj in sungjuks %}
+    <tr align="center">
+        <td width="55px">{{ sj["sjno"] }}</td>
+        <td width="100px" align="left"><a href="/sungjuk/{{ sj['sjno'] }}">{{ sj["name"] }}</a></td>
+        <td width="55px">{{ sj["kor"] }}</td>
+        <td width="55px">{{ sj["eng"] }}</td>
+        <td width="55px">{{ sj["mat"] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div style="text-align: right; margin-top: 20px;">
+    <a href="/board/new" style="padding: 10px 20px; background-color: blue; color: white; text-decoration: none; border-radius: 5px;">
+        ✏️ 새 글 쓰기
+    </a>
+</div>
+
+</body>
+</html>

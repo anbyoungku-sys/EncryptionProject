@@ -5,13 +5,35 @@ import aiosqlite
 
 router = APIRouter(prefix="/sungjuk", tags=["sungjuk"])
 
-@router.get("/list", response_class=HTMLResponse)
+@router.get(path="/list", response_class=HTMLResponse)
 async def sungjuk_list(request: Request):
-    pass
+    async with aiosqlite.connect(SungJukDB_NAME) as db:
+        results = await db.execute_fetchall("""
+            SELECT sjno, name, kor, eng, mat
+            FROM sungjuk ORDER BY sjno DESC""")
+
+    # 조회된 결과집합을 html에서 처리하기 편하게 JSON형식으로 변환
+    sungjuks = []
+    for rs in results:
+        sungjuk = {
+            "sjno": rs[0],
+            "name": rs[1],
+            "kor": rs[2],
+            "eng": rs[3],
+            "mat": rs[4]
+        }
+        sungjuks.append(sungjuk)
+
+    return templates.TemplateResponse("sungjuk/sungjuk_list.html", {
+        "request": request,
+        "sungjuks": sungjuks
+    })
+
+
 # 데이터 입력
 @router.get("/new", response_class=HTMLResponse)
 async def sungjuk_newform(request: Request):
-    pass
+
 # 데이터 저장
 @router.post("/new", response_class=HTMLResponse)
 async def sungjuk_new(request: Request,
