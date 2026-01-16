@@ -35,7 +35,13 @@ async def board_list(request: Request):
 # 게시판 글쓰기 폼
 @router.get("/new", response_class=HTMLResponse)
 def board_new_form(request: Request):
-    return templates.TemplateResponse("board/board_new.html", {"request": request})
+    # 이미 로그인 상태면 /member/login으로 로 이동
+    if request.session.get("user"):
+        return RedirectResponse(url="/member/login", status_code=303)
+
+   # 세션변수 user에서 username을 뽑아서 board_new.html로 넘김
+    return templates.TemplateResponse("board/board_new.html",
+                  {"request": request, "username": request.session.get("user")['username']})
 
 # 게시판 글쓰기 처리
 @router.post("/new")
