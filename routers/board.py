@@ -78,9 +78,14 @@ async def board_detail(request: Request, bdno: int):
         "contents": result[5],
     }
 
+    session_user = None
+    if request.session.get("user"):
+        session_user = request.session.get("user")['username']
+
     return templates.TemplateResponse("board/board_detail.html", {
-        "request": request,
-        "bd": board
+        "request": request, "bd": board,
+        "session_user": session_user  # 세션정볼르 템플릿에 넘김
+
     })
 
 # 게시글 삭제하기
