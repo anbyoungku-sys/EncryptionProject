@@ -1,5 +1,7 @@
 from fastapi import Request, Form, APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
+
+from db import Sungjuk_New_SQL
 from settings import SungJukDB_NAME, templates
 import aiosqlite
 
@@ -38,14 +40,12 @@ async def sungjuk_newform(request: Request):
 # 데이터 저장
 @router.post(path="/new", response_class=HTMLResponse)
 async def sungjuk_new(request: Request, name: str = Form(...),
-                      kor: int = Form(...), eng: int = Form(...), mat: int = Form(...)):
+      kor: int = Form(...), eng: int = Form(...), mat: int = Form(...)):
     # 성적 처리 (총점/평균/학점 계산)
     tot, avg, grd = compute_sungjuk(kor, eng, mat)
 
     async with aiosqlite.connect(SungJukDB_NAME) as db:
-        await db.execute(
-            """insert into sungjuk (name, kor, eng, mat, tot, avg, grd)
-               values (?, ?, ?, ?, ?, ?, ?)""",
+        await db.execute(Sungjuk_New_SQL,
             (name, kor, eng, mat, tot, avg, grd))
         await db.commit()
 
@@ -54,7 +54,27 @@ async def sungjuk_new(request: Request, name: str = Form(...),
 
 @router.get("/{sjno}", response_class=HTMLResponse)
 async def sungjuk_detail(request: Request, sjno: int):
-    pass
+    async with aiosqlite.connect(SungJukDB_NAME) as db:
+
+    if result is None:
+        return HTMLResponse(content="해당 글이 존재하지 않습니다.", status_code=404)
+
+    sungjuk = {
+        "sjno": result[0],
+        "name": result[1],
+        "kor": result[2],
+        "eng": result[3],
+        "mat": result[4],
+        "tot": result[5],
+        "avg": result[6],
+        "grd": result[7],
+        "regdate": result[8],
+    }
+
+    return templates.TemplateResponse("sungjuk/sungjuk_detail.html", {
+        "request": request,
+        "sj": sungjuk
+    })
 
 # 삭제
 @router.get("/{sjno}/delete", response_class=HTMLResponse)
@@ -72,7 +92,7 @@ async def sungjuk_edit(request: Request, sjno: int,
     pass
 
 
-def compute_sungjuk(name, kor, eng, mat):
+def compute_sungjuk(kor, eng, mat):
     """성적 데이터에 대한 총점,평균,학점 처리..."""
     tot = kor + eng + mat
     avg = tot / 3

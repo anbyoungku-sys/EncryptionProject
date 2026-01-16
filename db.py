@@ -2,6 +2,10 @@
 from settings import BoardDB_NAME, MemberDB_NAME, SungJukDB_NAME
 import aiosqlite
 
+# Sungjuk_ List_SQL = ""
+
+Sungjuk_New_SQL = """insert into sungjuk (name, kor, eng, mat, tot, avg, grd)
+   values (?, ?, ?, ?, ?, ?, ?)"""
 
 async def init_db():
     async with aiosqlite.connect(SungJukDB_NAME) as db:
