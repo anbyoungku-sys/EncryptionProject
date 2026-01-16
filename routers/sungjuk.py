@@ -58,7 +58,8 @@ async def sungjuk_detail(request: Request, sjno: int):
         result = await cursor.fetchone()  # DB에서 가져온 값을 result에 담아야 함
 
         if result is None:
-            return HTMLResponse(content="해당 글이 존재하지 않습니다.", status_code=404)
+            # return HTMLResponse(content="해당 글이 존재하지 않습니다.", status_code=404)
+            return RedirectResponse("/sungjuk/list", status_code=303)
 
         sungjuk = {
             "sjno": result[0],
@@ -95,7 +96,8 @@ async def sungjuk_editform(request: Request, sjno: int):
         result = await cursor.fetchone()
 
     if result is None:
-        return HTMLResponse(content="해당 글이 존재하지 않습니다.", status_code=404)
+        # return HTMLResponse(content="해당 글이 존재하지 않습니다.", status_code=404)
+        return RedirectResponse("/sungjuk/list", status_code=303)
 
     sungjuk = {
         "sjno": result[0],
